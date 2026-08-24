@@ -70,29 +70,31 @@
 
 :root {
   --radius: 1rem;
-  --cream: oklch(0.958 0.014 85);
-  --sage-light: oklch(0.913 0.024 133);
-  --sage-mid: oklch(0.786 0.043 137);
-  --sage-dark: oklch(0.664 0.055 139);
+  /* Brand: Agila Subic — ink black wordmark, cyan star accent */
+  --cream: oklch(0.985 0.003 220);
+  --sage-light: oklch(0.945 0.033 215);
+  --sage-mid: oklch(0.815 0.117 213);
+  --sage-dark: oklch(0.19 0.012 240);
   --background: var(--cream);
-  --foreground: oklch(0.32 0.02 140);
+  --foreground: oklch(0.19 0.012 240);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.32 0.02 140);
+  --card-foreground: oklch(0.19 0.012 240);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.32 0.02 140);
+  --popover-foreground: oklch(0.19 0.012 240);
   --primary: var(--sage-dark);
-  --primary-foreground: var(--cream);
+  --primary-foreground: oklch(0.99 0 0);
   --secondary: var(--sage-light);
-  --secondary-foreground: oklch(0.32 0.02 140);
-  --muted: oklch(0.94 0.012 120);
-  --muted-foreground: oklch(0.52 0.018 140);
-  --accent: var(--sage-light);
-  --accent-foreground: oklch(0.32 0.02 140);
+  --secondary-foreground: oklch(0.19 0.012 240);
+  --muted: oklch(0.955 0.006 220);
+  --muted-foreground: oklch(0.5 0.015 235);
+  --accent: var(--sage-mid);
+  --accent-foreground: oklch(0.19 0.012 240);
   --destructive: oklch(0.577 0.145 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.88 0.02 133);
-  --input: oklch(0.88 0.02 133);
-  --ring: var(--sage-dark);
+  --border: oklch(0.905 0.018 218);
+  --input: oklch(0.905 0.018 218);
+  --ring: var(--sage-mid);
+
 
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
