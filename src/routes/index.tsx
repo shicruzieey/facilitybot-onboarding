@@ -76,9 +76,13 @@ function Onboarding() {
 function Welcome({ onStart }: { onStart: () => void }) {
   return (
     <section className="animate-step-in space-y-6 text-center">
-      <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-sage-light">
-        <div className="h-6 w-6 rounded-full border-2 border-sage-dark" />
-      </div>
+      <img
+        src={logo.url}
+        alt="Agila Subic"
+        width={480}
+        height={80}
+        className="mx-auto mb-6 h-10 w-auto"
+      />
       <h1 className="text-4xl font-light tracking-tight text-foreground">Welcome home, neighbor.</h1>
       <p className="text-lg leading-relaxed text-muted-foreground">
         FacilityBot is your quiet companion for navigating this building. Let's take a moment to see
