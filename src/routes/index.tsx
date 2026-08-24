@@ -106,7 +106,7 @@ function StepCard({
   onBack: () => void;
   onNext: () => void;
 }) {
-  const step = STEPS[index - 1];
+  const step = STEPS[index - 1]!;
 
   return (
     <section className="animate-step-in">
