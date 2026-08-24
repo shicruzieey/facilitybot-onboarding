@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import qrPlacard from "@/assets/qr-placard.jpg";
 import concierge from "@/assets/concierge.jpg";
+import logo from "@/assets/agila-subic-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
