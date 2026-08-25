@@ -134,13 +134,14 @@ function Welcome({ onStart, onJump }: { onStart: () => void; onJump: (n: number)
       />
       <div className="space-y-4">
         <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-5xl">
-          Welcome home, neighbor.
+          Welcome to the Agila Subic facility.
         </h1>
         <p className="mx-auto max-w-xl text-lg leading-relaxed text-muted-foreground">
-          FacilityBot is your quiet companion for navigating this building. Let's take a moment to
-          see how things work here, one door at a time.
+          FacilityBot is your guide to getting around the shipyard campus — gate access, visitors,
+          equipment movement and repairs. Let's walk through it, one step at a time.
         </p>
       </div>
+
 
       <div className="grid gap-3 text-left sm:grid-cols-2">
         {STEPS.map((s, i) => (
