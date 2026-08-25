@@ -7,7 +7,7 @@ import logo from "@/assets/agila-subic-logo.png.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "FacilityBot Onboarding — A calm guide to your building" },
+      { title: "FacilityBot Onboarding — Agila Subic facility guide" },
       {
         name: "description",
         content:
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "FacilityBot Onboarding" },
       {
         property: "og:description",
-        content: "A calm, seven-step guide to using your building's facility services.",
+        content: "A calm, seven-step guide to facility services at the Agila Subic shipyard campus.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -245,7 +245,7 @@ function QrStep() {
   return (
     <>
       <Lead>
-        You'll find these placards at every entry point. Scanning one connects you to the building's
+        You'll find these placards at every entry point. Scanning one connects you to the campus's
         services instantly — nothing to download.
       </Lead>
       <div className="grid gap-6 sm:grid-cols-2">
@@ -599,7 +599,7 @@ function Finish({ onRestart, onJump }: { onRestart: () => void; onJump: (n: numb
       <div className="mb-8 inline-block rounded-full bg-sage-light/20 p-1">
         <img
           src={concierge}
-          alt="A smiling building concierge in the lobby"
+          alt="A smiling facility coordinator at the Agila Subic reception"
           width={512}
           height={512}
           loading="lazy"
@@ -608,7 +608,7 @@ function Finish({ onRestart, onJump }: { onRestart: () => void; onJump: (n: numb
       </div>
       <h2 className="mb-4 text-3xl font-light text-foreground">You're all set.</h2>
       <p className="mx-auto mb-10 max-w-md text-muted-foreground">
-        The building is now at your fingertips. If you ever feel lost, look for the placards or tap
+        The facility is now at your fingertips. If you ever feel lost, look for the placards or tap
         the chat bubble.
       </p>
 
