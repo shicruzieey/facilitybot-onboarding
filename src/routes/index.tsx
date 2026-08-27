@@ -17,6 +17,8 @@ import {
 import qrPlacard from "@/assets/qr-placard.jpg";
 import concierge from "@/assets/concierge.jpg";
 import logo from "@/assets/agila-subic-logo.png.asset.json";
+import facilitybotLogo from "@/assets/facilitybot-logo.png.asset.json";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -204,13 +206,24 @@ function Welcome({
   const started = done.length > 0;
   return (
     <section className="animate-step-in space-y-8 text-center">
-      <img
-        src={logo.url}
-        alt="Agila Subic"
-        width={480}
-        height={80}
-        className="mx-auto h-10 w-auto"
-      />
+      <div className="flex items-center justify-center gap-5">
+        <img
+          src={logo.url}
+          alt="Agila Subic"
+          width={480}
+          height={80}
+          className="h-10 w-auto"
+        />
+        <span className="h-8 w-px bg-sage-mid/40" aria-hidden="true" />
+        <img
+          src={facilitybotLogo.url}
+          alt="FacilityBot"
+          width={300}
+          height={300}
+          className="h-11 w-auto"
+        />
+      </div>
+
       <div className="space-y-4">
         <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-5xl">
           Welcome to the Agila Subic facility.
@@ -366,42 +379,37 @@ function QrStep() {
         You'll find these placards at every entry point. Scanning one connects you to the campus's
         services instantly — nothing to download.
       </Lead>
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="flex flex-col items-center gap-6">
         <img
           src={qrPlacard}
           alt="A QR code placard mounted on a plaster wall beside a wooden door"
           width={800}
           height={600}
-          className="h-56 w-full rounded-2xl object-cover"
+          className="h-72 w-full max-w-md rounded-2xl object-cover"
         />
-        <div className="flex flex-col justify-center rounded-2xl border border-sage-light bg-cream/50 p-6">
-          {scanned ? (
-            <div className="animate-step-in space-y-2">
-              <p className="flex items-center gap-2 font-medium text-foreground">
-                <Check className="h-4 w-4 text-sage-mid" /> Connected
-              </p>
-              <p className="text-sm text-muted-foreground">
-                You'd land straight on the menu — no app, no password.
-              </p>
-              <button
-                onClick={() => setScanned(false)}
-                className="text-sm font-medium text-sage-dark underline-offset-4 hover:underline"
-              >
-                Try again
-              </button>
-            </div>
-          ) : (
-            <>
-              <p className="mb-4 text-sm text-muted-foreground">Curious what happens next?</p>
-              <button
-                onClick={() => setScanned(true)}
-                className="flex items-center justify-center gap-2 rounded-full bg-sage-dark px-5 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-sage-dark/90 active:scale-[0.98]"
-              >
-                <QrCode className="h-4 w-4" /> Try a scan
-              </button>
-            </>
-          )}
-        </div>
+        {scanned ? (
+          <div className="animate-step-in space-y-2 text-center">
+            <p className="flex items-center justify-center gap-2 font-medium text-foreground">
+              <Check className="h-4 w-4 text-sage-mid" /> Connected
+            </p>
+            <p className="text-sm text-muted-foreground">
+              You'd land straight on the menu — no app, no password.
+            </p>
+            <button
+              onClick={() => setScanned(false)}
+              className="text-sm font-medium text-sage-dark underline-offset-4 hover:underline"
+            >
+              Try again
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setScanned(true)}
+            className="flex items-center justify-center gap-2 rounded-full bg-sage-dark px-6 py-3 text-sm font-medium text-primary-foreground transition-all hover:bg-sage-dark/90 active:scale-[0.98]"
+          >
+            <QrCode className="h-4 w-4" /> Simulate QR scan
+          </button>
+        )}
       </div>
     </>
   );
@@ -425,17 +433,25 @@ function MenuStep() {
             <button
               onClick={() => setOpen(open === i ? -1 : i)}
               aria-expanded={open === i}
-              className={`w-full rounded-2xl px-5 py-4 text-left transition-colors ${
+              className={`w-full rounded-2xl px-5 py-4 text-left transition-colors duration-300 ${
                 open === i ? "bg-sage-light/70" : "bg-sage-light/30 hover:bg-sage-light/50"
               }`}
             >
               <p className="font-medium text-foreground">{title}</p>
               <p className="text-sm text-muted-foreground">{desc}</p>
-              {open === i && (
-                <p className="mt-3 border-t border-sage-mid/30 pt-3 text-sm text-foreground">
-                  {detail}
-                </p>
-              )}
+              <div
+                className="grid transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                style={{
+                  gridTemplateRows: open === i ? "1fr" : "0fr",
+                  opacity: open === i ? 1 : 0,
+                }}
+              >
+                <div className="overflow-hidden">
+                  <p className="mt-3 border-t border-sage-mid/30 pt-3 text-sm text-foreground">
+                    {detail}
+                  </p>
+                </div>
+              </div>
             </button>
           </li>
         ))}
@@ -443,6 +459,7 @@ function MenuStep() {
     </>
   );
 }
+
 
 function VisitorStep() {
   const [name, setName] = useState("");
