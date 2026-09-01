@@ -6,19 +6,15 @@ import {
   UserPlus,
   PackageCheck,
   Wrench,
-  Megaphone,
-  MessagesSquare,
+  ListChecks,
+  UserCog,
   Check,
-  Star,
   ArrowLeft,
   ArrowRight,
   type LucideIcon,
 } from "lucide-react";
-import qrPlacard from "@/assets/qr-placard.jpg";
-import concierge from "@/assets/concierge.jpg";
 import logo from "@/assets/agila-subic-logo.png";
 import facilitybotLogo from "@/assets/facilitybot-logo.png";
-
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,9 +23,9 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "A simple, seven-step walkthrough of FacilityBot: QR access, visitor entry, gatepasses, service requests, announcements and chat support.",
+          "A simple, seven-step walkthrough of FacilityBot: access, visitors and deliveries, item removal, service requests, tracking and account support.",
       },
-      { property: "og:title", content: "FacilityBot Onboarding" },
+      { property: "og:title", content: "FacilityBot Onboarding — Agila Subic" },
       {
         property: "og:description",
         content: "A calm, seven-step guide to facility services at the Agila Subic shipyard campus.",
@@ -42,13 +38,13 @@ export const Route = createFileRoute("/")({
 });
 
 const STEPS = [
-  { key: "qr", eyebrow: "Access", title: "How to Access", short: "Access", icon: QrCode, minutes: 1 },
-  { key: "menu", eyebrow: "Navigation", title: "Key Features", short: "Features", icon: LayoutGrid, minutes: 1 },
-  { key: "visitor", eyebrow: "Requests", title: "Visitors & Deliveries", short: "Visitors", icon: UserPlus, minutes: 2 },
-  { key: "gatepass", eyebrow: "Requests", title: "Removing Items", short: "Removals", icon: PackageCheck, minutes: 2 },
-  { key: "service", eyebrow: "Requests", title: "Service Request", short: "Service", icon: Wrench, minutes: 2 },
-  { key: "tracking", eyebrow: "Management", title: "Track Your Requests", short: "Tracking", icon: Megaphone, minutes: 1 },
-  { key: "chat", eyebrow: "Support", title: "Account & Support", short: "Support", icon: MessagesSquare, minutes: 1 },
+  { key: "qr", title: "How to Access", short: "Access", icon: QrCode },
+  { key: "menu", title: "Key Features", short: "Features", icon: LayoutGrid },
+  { key: "visitor", title: "Visitors & Deliveries", short: "Visitors", icon: UserPlus },
+  { key: "gatepass", title: "Removing Items", short: "Removals", icon: PackageCheck },
+  { key: "service", title: "Service Requests", short: "Service", icon: Wrench },
+  { key: "tracking", title: "Track Your Requests", short: "Tracking", icon: ListChecks },
+  { key: "chat", title: "Account & Support", short: "Account", icon: UserCog },
 ] as const;
 
 const STORAGE_KEY = "facilitybot-onboarding-v1";
@@ -59,7 +55,6 @@ function Onboarding() {
   const [done, setDone] = useState<number[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const total = STEPS.length;
-  const progress = done.length / total;
 
   useEffect(() => {
     try {
@@ -88,11 +83,12 @@ function Onboarding() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const el = document.activeElement;
-      const typing =
+      if (
         el instanceof HTMLInputElement ||
         el instanceof HTMLTextAreaElement ||
-        el instanceof HTMLSelectElement;
-      if (typing) return;
+        el instanceof HTMLSelectElement
+      )
+        return;
       if (e.key === "ArrowRight")
         setPhase((p) => {
           if (p >= 1 && p <= total) complete(p);
@@ -105,60 +101,24 @@ function Onboarding() {
   }, [total]);
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-cream text-foreground selection:bg-sage-mid/30">
-      <div className="fixed inset-x-0 top-0 z-50 h-1.5 bg-sage-light/50">
-        <div
-          className="h-full bg-sage-mid transition-all duration-700 ease-in-out"
-          style={{ width: `${progress * 100}%` }}
-        />
-      </div>
-
-      {phase > 0 && phase <= total && (
-        <nav className="sticky top-1.5 z-40 border-b border-sage-light/70 bg-cream/80 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-2 px-6 py-3 lg:px-12">
-            {STEPS.map((s, i) => {
-              const n = i + 1;
-              const isDone = done.includes(n);
-              const current = n === phase;
-              return (
-                <button
-                  key={s.key}
-                  onClick={() => setPhase(n)}
-                  aria-current={current ? "step" : undefined}
-                  aria-label={`Step ${n}: ${s.title}`}
-                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition-all ${
-                    current
-                      ? "bg-sage-dark text-primary-foreground shadow-sm"
-                      : isDone
-                        ? "bg-sage-mid/25 text-sage-dark hover:bg-sage-mid/40"
-                        : "text-muted-foreground hover:bg-sage-light/50"
-                  }`}
-                >
-                  {isDone && !current ? <Check className="h-3 w-3" /> : null}
-                  {s.short}
-                </button>
-              );
-            })}
-          </div>
-        </nav>
-      )}
-
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6 py-12 lg:px-12">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-16">
         {phase === 0 && (
           <Welcome
             done={done}
             onStart={() => setPhase(done.length > 0 ? Math.min(done.length + 1, total) : 1)}
-            onJump={(n) => setPhase(n)}
+            onJump={setPhase}
             onReset={() => setDone([])}
           />
         )}
 
         {phase > 0 && phase <= total && (
-          <StepCard
+          <StepView
             key={phase}
             index={phase}
             total={total}
-            isDone={done.includes(phase)}
+            done={done}
+            onJump={setPhase}
             onBack={() => setPhase(phase - 1)}
             onNext={() => {
               complete(phase);
@@ -177,20 +137,108 @@ function Onboarding() {
           />
         )}
       </main>
-
-      {phase > 0 && phase <= total && (
-        <p className="pb-6 text-center text-xs text-muted-foreground">
-          💡 Psst... you can use ← and → keys to move between steps
-        </p>
-      )}
-
-      <div className="pointer-events-none fixed bottom-0 right-0 -z-10 p-12 opacity-20">
-        <div className="h-64 w-64 rounded-full border border-sage-dark/20" />
-        <div className="absolute -bottom-10 -right-10 h-48 w-48 rounded-full border border-sage-dark/20" />
-      </div>
     </div>
   );
 }
+
+/* ---------- shared primitives ---------- */
+
+function Lockup() {
+  return (
+    <div className="flex items-center justify-center gap-4">
+      <img src={logo} alt="Agila Subic" width={480} height={80} className="h-7 w-auto" />
+      <span className="h-6 w-px bg-border" aria-hidden="true" />
+      <img
+        src={facilitybotLogo}
+        alt="FacilityBot"
+        width={300}
+        height={300}
+        className="h-8 w-auto"
+      />
+    </div>
+  );
+}
+
+function Panel({ title, children }: { title?: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+      {title && (
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          {title}
+        </p>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function Rows({ items }: { items: { label: string; desc?: string }[] }) {
+  return (
+    <ul className="divide-y divide-border/60">
+      {items.map((it) => (
+        <li key={it.label} className="flex gap-3 py-3 first:pt-0 last:pb-0">
+          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-medium text-foreground">{it.label}</p>
+            {it.desc && <p className="text-sm text-muted-foreground">{it.desc}</p>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Steps({ items }: { items: string[] }) {
+  return (
+    <ol className="space-y-3">
+      {items.map((s, i) => (
+        <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
+            {i + 1}
+          </span>
+          <span className="pt-0.5">{s}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function Tip({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="border-l-2 border-accent pl-4">
+      <p className="text-sm font-medium text-foreground">{title}</p>
+      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{children}</p>
+    </div>
+  );
+}
+
+function Lead({ children }: { children: React.ReactNode }) {
+  return <p className="text-base leading-relaxed text-muted-foreground">{children}</p>;
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputClass =
+  "w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground/60 focus:border-accent";
+
+function PracticeForm({ children }: { children: React.ReactNode }) {
+  return (
+    <Panel title="Practice form — nothing is submitted">
+      <div className="space-y-4">{children}</div>
+    </Panel>
+  );
+}
+
+/* ---------- welcome ---------- */
 
 function Welcome({
   done,
@@ -204,376 +252,345 @@ function Welcome({
   onReset: () => void;
 }) {
   const started = done.length > 0;
+  const next = Math.min(done.length + 1, STEPS.length);
+
   return (
-    <section className="animate-step-in space-y-8 text-center">
-      <div className="flex items-center justify-center gap-5">
-        <img
-          src={logo}
-          alt="Agila Subic"
-          width={480}
-          height={80}
-          className="h-10 w-auto"
-        />
-        <span className="h-8 w-px bg-sage-mid/40" aria-hidden="true" />
-        <img
-          src={facilitybotLogo}
-          alt="FacilityBot"
-          width={300}
-          height={300}
-          className="h-11 w-auto"
-        />
-      </div>
+    <section className="animate-step-in flex flex-col items-center text-center">
+      <Lockup />
 
-      <div className="space-y-4">
-        <h1 className="text-4xl font-light tracking-tight text-foreground sm:text-5xl">
-          Hey, welcome! 👋
-        </h1>
-        <p className="mx-auto max-w-xl text-lg leading-relaxed text-muted-foreground">
-          This is a quick walkthrough of FacilityBot for POCs (that's Point of Contact). We'll show you the basics — creating requests, checking status, and getting things done at Agila Subic.
-        </p>
-      </div>
+      <h1 className="mt-12 font-display text-4xl font-semibold tracking-tight">
+        Welcome to FacilityBot
+      </h1>
+      <p className="mt-4 max-w-md text-muted-foreground">
+        Seven short steps on how to raise and track requests at the Agila Subic shipyard campus.
+      </p>
 
-      <div className="grid gap-3 text-left sm:grid-cols-2">
+      <div className="mt-12 grid w-full gap-3 sm:grid-cols-2">
         {STEPS.map((s, i) => {
-          const Icon = s.icon;
-          const isDone = done.includes(i + 1);
+          const n = i + 1;
+          const isDone = done.includes(n);
+          const isNext = started ? n === next : n === 1;
           return (
             <button
               key={s.key}
-              onClick={() => onJump(i + 1)}
-              className="group flex items-center gap-4 rounded-2xl border border-sage-light bg-white/60 px-5 py-4 text-left transition-all hover:-translate-y-0.5 hover:border-sage-mid hover:shadow-sm"
+              onClick={() => onJump(n)}
+              className={`flex items-center gap-4 rounded-2xl border bg-card p-4 text-left transition-colors ${
+                isNext ? "border-accent" : "border-border/70 hover:border-accent/60"
+              } ${i === STEPS.length - 1 ? "sm:col-span-2" : ""}`}
             >
               <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors ${
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
                   isDone
-                    ? "bg-sage-mid text-sage-dark"
-                    : "bg-sage-light text-sage-dark group-hover:bg-sage-mid"
+                    ? "bg-accent text-accent-foreground"
+                    : isNext
+                      ? "bg-foreground text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
                 }`}
               >
-                {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+                {isDone ? <Check className="h-4 w-4" /> : n}
               </span>
-              <span>
-                <span className="block font-medium text-foreground">{s.title}</span>
-                <span className="block text-sm text-muted-foreground">{s.eyebrow}</span>
-              </span>
+              <span className="text-sm font-medium">{s.title}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="space-y-3">
+      <button
+        onClick={onStart}
+        className="mt-12 rounded-full bg-foreground px-10 py-4 font-medium text-primary-foreground transition-transform hover:shadow-lg active:scale-95"
+      >
+        {started ? "Continue where you left off" : "Start onboarding"}
+      </button>
+
+      <p className="mt-6 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {started ? `${done.length} of ${STEPS.length} done` : `${STEPS.length} steps · about 5 min`}
+      </p>
+
+      {started && (
         <button
-          onClick={onStart}
-          className="rounded-full bg-sage-dark px-10 py-4 font-display font-medium text-primary-foreground shadow-lg shadow-sage-dark/20 transition-all hover:bg-sage-dark/90 active:scale-[0.98]"
+          onClick={onReset}
+          className="mt-3 text-xs text-muted-foreground underline-offset-4 hover:underline"
         >
-          {started ? "Pick up where you left off" : "Let's get started"}
+          Start over
         </button>
-        <p className="text-sm text-muted-foreground">
-          {started
-            ? `You've finished ${done.length} out of ${STEPS.length} steps`
-            : "Takes about 5 minutes — seven quick steps"}
-        </p>
-        {started && (
-          <button
-            onClick={onReset}
-            className="text-xs font-medium text-muted-foreground underline-offset-4 hover:underline"
-          >
-            Start over from the beginning
-          </button>
-        )}
-      </div>
+      )}
     </section>
   );
 }
 
-function StepCard({
+/* ---------- step shell ---------- */
+
+function StepView({
   index,
   total,
-  isDone,
+  done,
+  onJump,
   onBack,
   onNext,
 }: {
   index: number;
   total: number;
-  isDone: boolean;
+  done: number[];
+  onJump: (n: number) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
   const step = STEPS[index - 1]!;
-  const Icon = step.icon;
+  const Icon: LucideIcon = step.icon;
 
   return (
     <section className="animate-step-in">
-      <div className="rounded-[32px] border border-sage-light bg-white/60 p-8 shadow-sm sm:p-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-sage-dark/60">
-              Step {index} of {total} · {step.eyebrow}
-            </span>
-            <h2 className="mb-8 mt-4 flex items-center gap-3 text-3xl text-foreground">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sage-light text-sage-dark">
-                <Icon className="h-5 w-5" />
-              </span>
-              {step.title}
-            </h2>
-          </div>
-          {isDone && (
-            <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-sage-mid/25 px-3 py-1 text-xs font-medium text-sage-dark">
-              <Check className="h-3 w-3" /> Done
-            </span>
-          )}
-        </div>
-
-        <StepBody stepKey={step.key} />
-
-        <div className="mt-12 flex items-center justify-between gap-4">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 font-medium text-sage-dark/60 transition-colors hover:text-sage-dark"
-          >
-            <ArrowLeft className="h-4 w-4" /> Go back
-          </button>
-          <button
-            onClick={onNext}
-            className="flex items-center gap-2 rounded-full bg-sage-dark px-10 py-3 font-medium text-primary-foreground transition-all hover:bg-sage-dark/90 active:scale-[0.98]"
-          >
-            {index === total ? "Done" : "Got it"}
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
+      <div className="mb-10 flex items-center justify-between gap-6">
+        <Lockup />
+        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Step {index} of {total}
+        </span>
       </div>
+
+      <div className="mb-10 flex gap-1.5" role="tablist" aria-label="Onboarding steps">
+        {STEPS.map((s, i) => {
+          const n = i + 1;
+          const active = n === index;
+          return (
+            <button
+              key={s.key}
+              onClick={() => onJump(n)}
+              aria-label={`Step ${n}: ${s.title}`}
+              aria-current={active ? "step" : undefined}
+              className={`h-1.5 flex-1 rounded-full transition-colors ${
+                active
+                  ? "bg-foreground"
+                  : done.includes(n)
+                    ? "bg-accent"
+                    : "bg-border hover:bg-accent/50"
+              }`}
+            />
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted">
+          <Icon className="h-4 w-4" />
+        </span>
+        <h2 className="font-display text-3xl font-semibold tracking-tight">{step.title}</h2>
+      </div>
+
+      <div className="mt-6 space-y-6">
+        <StepBody stepKey={step.key} />
+      </div>
+
+      <div className="mt-12 flex items-center justify-between border-t border-border/70 pt-6">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back
+        </button>
+        <button
+          onClick={onNext}
+          className="flex items-center gap-2 rounded-full bg-foreground px-8 py-3 text-sm font-medium text-primary-foreground transition-transform hover:shadow-lg active:scale-95"
+        >
+          {index === total ? "Finish" : "Next"}
+          <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
+
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        Tip: use ← and → to move between steps
+      </p>
     </section>
   );
 }
 
-function Lead({ children }: { children: React.ReactNode }) {
-  return <p className="mb-8 text-lg leading-relaxed text-muted-foreground">{children}</p>;
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-medium text-muted-foreground">{label}</label>
-      {children}
-    </div>
-  );
-}
-
-const inputClass =
-  "w-full border-b border-sage-mid/30 bg-cream/40 px-1 py-3 transition-colors placeholder:text-muted-foreground/50 focus:border-sage-dark focus:outline-none";
-
-function Note({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="mt-6 rounded-2xl bg-sage-light/40 px-5 py-4 text-sm leading-relaxed text-foreground">
-      {children}
-    </p>
-  );
-}
+/* ---------- steps ---------- */
 
 function QrStep() {
   const [method, setMethod] = useState<"web" | "app">("web");
+
   return (
     <>
-      <Lead>
-        You can use FacilityBot on your browser or phone — same account, works everywhere.
-      </Lead>
-      
-      <div className="mb-6 grid gap-4 sm:grid-cols-2">
-        <button
-          onClick={() => setMethod("web")}
-          aria-pressed={method === "web"}
-          className={`rounded-2xl border px-5 py-4 text-left transition-all ${
-            method === "web"
-              ? "border-sage-dark bg-sage-light/60"
-              : "border-sage-mid/30 hover:border-sage-mid"
-          }`}
-        >
-          <p className="font-medium text-foreground">Web Browser</p>
-          <p className="text-sm text-muted-foreground">Go to agilasubic.facilitybot.co</p>
-        </button>
-        <button
-          onClick={() => setMethod("app")}
-          aria-pressed={method === "app"}
-          className={`rounded-2xl border px-5 py-4 text-left transition-all ${
-            method === "app"
-              ? "border-sage-dark bg-sage-light/60"
-              : "border-sage-mid/30 hover:border-sage-mid"
-          }`}
-        >
-          <p className="font-medium text-foreground">Phone App</p>
-          <p className="text-sm text-muted-foreground">App Store or Google Play</p>
-        </button>
+      <Lead>Use FacilityBot in your browser or on your phone — same account either way.</Lead>
+
+      <div className="inline-flex rounded-full border border-border p-1">
+        {(["web", "app"] as const).map((m) => (
+          <button
+            key={m}
+            onClick={() => setMethod(m)}
+            aria-pressed={method === m}
+            className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
+              method === m ? "bg-foreground text-primary-foreground" : "text-muted-foreground"
+            }`}
+          >
+            {m === "web" ? "Web browser" : "Mobile app"}
+          </button>
+        ))}
       </div>
 
       {method === "web" ? (
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-            <p className="mb-3 font-medium text-foreground">Logging in is straightforward:</p>
-            <ol className="space-y-2">
-              {[
-                "Open your browser, go to agilasubic.facilitybot.co",
-                "Type in your email or company domain",
-                "Add your password",
-                "Hit Sign In and you're good",
-              ].map((step, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sage-mid/30 text-xs font-bold text-sage-dark">
-                    {i + 1}
-                  </span>
-                  {step}
-                </li>
-              ))}
-            </ol>
-          </div>
-          <Note>
-            Pro tip: You can use Google Authenticator to sign in if that's easier.
-          </Note>
-        </div>
+        <>
+          <Panel title="Signing in on the web">
+            <Steps
+              items={[
+                "Open agilasubic.facilitybot.co in your browser",
+                "Enter your email or company domain",
+                "Enter your password",
+                "Select Sign In",
+              ]}
+            />
+          </Panel>
+          <Tip title="Good to know">
+            You can also sign in with Google Authenticator if two-factor is enabled on your account.
+          </Tip>
+        </>
       ) : (
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-            <p className="mb-3 font-medium text-foreground">Getting the app:</p>
-            <ol className="space-y-2">
-              {[
-                'Search "FacilityBot" in your app store',
+        <>
+          <Panel title="Setting up the app">
+            <Steps
+              items={[
+                'Search "FacilityBot" in the App Store or Google Play',
                 "Download and install it",
-                "Log in with your email and password (same as web)",
-                "Turn on notifications so you don't miss updates",
-              ].map((step, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sage-mid/30 text-xs font-bold text-sage-dark">
-                    {i + 1}
-                  </span>
-                  {step}
-                </li>
-              ))}
-            </ol>
-          </div>
-          <Note>
-            The app is handy for getting instant notifications. Everything syncs between your phone and computer automatically.
-          </Note>
-        </div>
+                "Log in with the same email and password",
+                "Turn on notifications for request updates",
+              ]}
+            />
+          </Panel>
+          <Tip title="Good to know">
+            Everything syncs between phone and desktop, so you can start a request anywhere.
+          </Tip>
+        </>
       )}
     </>
   );
 }
 
 function MenuStep() {
+  const [open, setOpen] = useState<string | null>("Requests");
   const features = [
-    { title: "Requests", desc: "Create, access, track, and update your requests", icon: "📋" },
-    { title: "Broadcasts", desc: "Receive announcements and advisories", icon: "📢" },
+    {
+      title: "Requests",
+      desc: "Create, access, track and update your requests",
+      detail:
+        "This is where you raise visitor entries, item removals and service requests — and where you follow their status until they close.",
+    },
+    {
+      title: "Broadcasts",
+      desc: "Announcements and advisories from the facility team",
+      detail:
+        "Power interruptions, road works, drills and safety advisories are posted here. Check it before planning site activity.",
+    },
   ];
-  
+
   return (
     <>
       <Lead>
-        Once you're in, there are two main areas. You'll mostly use Requests — that's where the action happens.
+        There are two main areas after you sign in. You will spend most of your time in Requests.
       </Lead>
+
       <div className="space-y-3">
-        {features.map(({ title, desc, icon }) => (
-          <div
-            key={title}
-            className="flex items-center gap-4 rounded-2xl border border-sage-light bg-white/60 px-5 py-4"
-          >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-sage-light text-2xl">
-              {icon}
+        {features.map((f) => {
+          const isOpen = open === f.title;
+          return (
+            <div key={f.title} className="rounded-2xl border border-border/70 bg-card">
+              <button
+                onClick={() => setOpen(isOpen ? null : f.title)}
+                aria-expanded={isOpen}
+                className="flex w-full items-center justify-between gap-4 p-5 text-left"
+              >
+                <span>
+                  <span className="block text-sm font-medium">{f.title}</span>
+                  <span className="block text-sm text-muted-foreground">{f.desc}</span>
+                </span>
+                <span
+                  className={`text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </button>
+              <div
+                className="grid transition-all duration-300 ease-out"
+                style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+              >
+                <div className="overflow-hidden">
+                  <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">
+                    {f.detail}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="font-medium text-foreground">{title}</p>
-              <p className="text-sm text-muted-foreground">{desc}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
-      <Note>
-        When you log in, your recent requests show up right on the main screen in the Preview Pane — makes it easy to jump back in.
-      </Note>
+
+      <Tip title="Preview pane">
+        Your most recent requests appear on the main screen the moment you sign in.
+      </Tip>
     </>
   );
 }
-
 
 function VisitorStep() {
   const [name, setName] = useState("");
   const [vehicle, setVehicle] = useState("");
   const [items, setItems] = useState("");
-  
+
   return (
     <>
       <Lead>
-        Use this when you have visitors, guests, or deliveries coming to the Shipyard. Just declare who's coming, what vehicles they're bringing, and any equipment or items.
+        Use this for visitors, guests or deliveries coming into the shipyard. Declare who is coming,
+        what vehicles they bring, and any equipment with them.
       </Lead>
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-3 font-medium text-foreground">What you need to tell us:</p>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <span className="text-xl">👥</span>
-              <div>
-                <p className="text-sm font-medium text-foreground">Full names</p>
-                <p className="text-xs text-muted-foreground">Everyone who's entering</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-xl">🚗</span>
-              <div>
-                <p className="text-sm font-medium text-foreground">Plate numbers</p>
-                <p className="text-xs text-muted-foreground">Any vehicles coming in</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-xl">📦</span>
-              <div>
-                <p className="text-sm font-medium text-foreground">Items & equipment</p>
-                <p className="text-xs text-muted-foreground">Anything they're bringing</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-2 flex items-center gap-2 font-medium text-foreground">
-            <span className="text-lg">📝</span> Practice Form (Nothing will be submitted)
-          </p>
-          <p className="mb-4 text-xs text-muted-foreground">Fields marked with * are required</p>
-          <div className="space-y-4">
-            <Field label="Visitor Names *">
-              <textarea
-                rows={2}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter full names of all visitors"
-                className={inputClass}
-              />
-            </Field>
-            <Field label="Vehicle Plate Number(s)">
-              <input
-                type="text"
-                value={vehicle}
-                onChange={(e) => setVehicle(e.target.value)}
-                placeholder="e.g., ABC 1234"
-                className={inputClass}
-              />
-            </Field>
-            <Field label="Items/Equipment Brought In">
-              <textarea
-                rows={2}
-                value={items}
-                onChange={(e) => setItems(e.target.value)}
-                placeholder="List all items being brought in"
-                className={inputClass}
-              />
-            </Field>
-          </div>
-        </div>
+      <Panel title="What to include">
+        <Rows
+          items={[
+            { label: "Full names", desc: "Everyone entering the campus" },
+            { label: "Plate numbers", desc: "Any vehicles coming in" },
+            { label: "Items & equipment", desc: "Anything they are bringing with them" },
+          ]}
+        />
+      </Panel>
 
-        <div className="rounded-2xl border border-sage-mid/40 bg-sage-light/40 p-4">
-          <p className="mb-2 text-sm font-semibold text-sage-dark">💡 Heads up</p>
-          <p className="text-sm text-foreground">
-            If something's coming in now but leaving later, you'll connect the removal request to this delivery when the time comes.
+      <PracticeForm>
+        <Field label="Visitor names *">
+          <textarea
+            rows={2}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Full names of all visitors"
+            className={inputClass}
+          />
+        </Field>
+        <Field label="Vehicle plate number(s)">
+          <input
+            type="text"
+            value={vehicle}
+            onChange={(e) => setVehicle(e.target.value)}
+            placeholder="e.g. ABC 1234"
+            className={inputClass}
+          />
+        </Field>
+        <Field label="Items / equipment brought in">
+          <textarea
+            rows={2}
+            value={items}
+            onChange={(e) => setItems(e.target.value)}
+            placeholder="List all items being brought in"
+            className={inputClass}
+          />
+        </Field>
+        {(name || vehicle || items) && (
+          <p className="text-sm text-muted-foreground">
+            Preview: <span className="font-medium text-foreground">{name || "Visitor"}</span>
+            {vehicle ? ` · ${vehicle}` : ""}
+            {items ? ` · ${items}` : ""}
           </p>
-        </div>
-      </div>
+        )}
+      </PracticeForm>
+
+      <Tip title="Heads up">
+        If something comes in now but leaves later, link the removal request back to this delivery.
+      </Tip>
     </>
   );
 }
@@ -581,74 +598,55 @@ function VisitorStep() {
 function GatepassStep() {
   const [desc, setDesc] = useState("");
   const [location, setLocation] = useState("");
-  
+
   return (
     <>
       <Lead>
-        Need to take something out? Use this for removing items or equipment. If the stuff was delivered earlier, just make sure it was declared when it came in.
+        Use this to take items or equipment out of the campus. If the items were delivered earlier,
+        make sure they were declared on the way in.
       </Lead>
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-3 font-medium text-foreground">What you need:</p>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3">
-              <span className="text-xl">📝</span>
-              <div>
-                <p className="text-sm font-medium text-foreground">List all items to be removed</p>
-                <p className="text-xs text-muted-foreground">Provide complete details and descriptions</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-xl">📸</span>
-              <div>
-                <p className="text-sm font-medium text-foreground">Photos for hazardous items</p>
-                <p className="text-xs text-muted-foreground">Required for waste, garbage, or hazardous materials</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-xl">🔗</span>
-              <div>
-                <p className="text-sm font-medium text-foreground">Link to original delivery</p>
-                <p className="text-xs text-muted-foreground">If items were brought in earlier, link to that request</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-2 flex items-center gap-2 font-medium text-foreground">
-            <span className="text-lg">📝</span> Practice Form (Nothing will be submitted)
-          </p>
-          <p className="mb-4 text-xs text-muted-foreground">Fields marked with * are required</p>
-          <div className="space-y-4">
-            <Field label="Equipment/Items Description *">
-              <textarea
-                rows={3}
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="List all equipment, tools, or materials to be removed"
-                className={inputClass}
-              />
-            </Field>
-            <Field label="Dock Location *">
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g., Dry Dock 1, Building A"
-                className={inputClass}
-              />
-            </Field>
-          </div>
-        </div>
+      <Panel title="What to include">
+        <Rows
+          items={[
+            { label: "List of items to remove", desc: "Complete details and descriptions" },
+            { label: "Photos for hazardous items", desc: "Required for waste, garbage or hazardous materials" },
+            { label: "Link to the original delivery", desc: "If the items were brought in earlier" },
+          ]}
+        />
+      </Panel>
 
-        <div className="rounded-2xl border border-sage-mid/40 bg-sage-light/40 p-4">
-          <p className="mb-2 text-sm font-semibold text-sage-dark">💡 Quick reminder</p>
-          <p className="text-sm text-foreground">
-            Guards check everything at the gate against what you listed. Double-check your details before submitting.
+      <PracticeForm>
+        <Field label="Equipment / items description *">
+          <textarea
+            rows={3}
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            placeholder="Equipment, tools or materials to be removed"
+            className={inputClass}
+          />
+        </Field>
+        <Field label="Dock location *">
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g. Dry Dock 1, Building A"
+            className={inputClass}
+          />
+        </Field>
+        {desc && location && (
+          <p className="text-sm text-muted-foreground">
+            Ready to submit — a case ID like{" "}
+            <span className="font-medium text-foreground">AGL-2471</span> would be issued.
           </p>
-        </div>
-      </div>
+        )}
+      </PracticeForm>
+
+      <Tip title="Quick reminder">
+        Guards check everything at the gate against what you listed, so review the details before
+        submitting.
+      </Tip>
     </>
   );
 }
@@ -656,192 +654,151 @@ function GatepassStep() {
 function ServiceStep() {
   const [desc, setDesc] = useState("");
   const [location, setLocation] = useState("");
-  
+
   return (
     <>
       <Lead>
-        Something broken or not working? Use this to get help with power, water, equipment issues — that kind of thing.
+        Raise a service request for anything broken or not working — power, water, lift station and
+        general support.
       </Lead>
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-3 font-medium text-foreground">What you can request:</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[
-              { icon: "⚡", label: "Power Supply" },
-              { icon: "💧", label: "Water Supply" },
-              { icon: "🏗️", label: "Lift Station" },
-              { icon: "🚑", label: "Support Services" },
-            ].map(({ icon, label }) => (
-              <div key={label} className="flex items-center gap-2 rounded-xl border border-sage-mid/30 bg-cream/40 px-3 py-2">
-                <span className="text-lg">{icon}</span>
-                <span className="text-sm font-medium text-foreground">{label}</span>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Support Services = ambulance, fire truck, training sessions, misc. facility stuff
-          </p>
-        </div>
 
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-2 flex items-center gap-2 font-medium text-foreground">
-            <span className="text-lg">📝</span> Practice Form (Nothing will be submitted)
-          </p>
-          <p className="mb-4 text-xs text-muted-foreground">Fields marked with * are required</p>
-          <div className="space-y-4">
-            <Field label="Fault Description *">
-              <textarea
-                rows={3}
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                placeholder="Describe the issue in detail"
-                className={inputClass}
-              />
-            </Field>
-            <Field label="Fault Location *">
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g., Building A, Floor 2, Room 201"
-                className={inputClass}
-              />
-            </Field>
-          </div>
+      <Panel title="What you can request">
+        <div className="grid gap-2 sm:grid-cols-2">
+          {["Power supply", "Water supply", "Lift station", "Support services"].map((label) => (
+            <div
+              key={label}
+              className="rounded-xl border border-border/70 px-4 py-2.5 text-sm font-medium"
+            >
+              {label}
+            </div>
+          ))}
         </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          Support services covers ambulance, fire truck, training sessions and other facility needs.
+        </p>
+      </Panel>
 
-        <div className="rounded-2xl border border-sage-mid/40 bg-sage-light/40 p-4">
-          <p className="mb-2 text-sm font-semibold text-sage-dark">Other stuff you can request:</p>
-          <ul className="space-y-1 text-sm text-foreground">
-            <li>• <strong>HSE Induction</strong> — safety training stuff</li>
-            <li>• <strong>Talk to Agent</strong> — live chat with the helpdesk team</li>
-          </ul>
-        </div>
-      </div>
+      <PracticeForm>
+        <Field label="Fault description *">
+          <textarea
+            rows={3}
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            placeholder="Describe the issue in detail"
+            className={inputClass}
+          />
+        </Field>
+        <Field label="Fault location *">
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g. Building A, Floor 2, Room 201"
+            className={inputClass}
+          />
+        </Field>
+        {desc && location && (
+          <p className="text-sm text-muted-foreground">
+            Logged as <span className="font-medium text-foreground">Pending</span> — the helpdesk
+            picks it up from here.
+          </p>
+        )}
+      </PracticeForm>
+
+      <Tip title="Also available">
+        HSE induction bookings and Talk to Agent live chat with the helpdesk team.
+      </Tip>
     </>
   );
 }
 
 function TrackingStep() {
+  const [selected, setSelected] = useState("Pending");
   const statuses = [
-    { status: "Pending", desc: "Submitted and waiting for review", color: "bg-sage-light/60 text-sage-dark border-sage-mid/40", icon: "⏳" },
-    { status: "Processing", desc: "Being handled by the team", color: "bg-sage-mid/30 text-sage-dark border-sage-mid/40", icon: "⚙️" },
-    { status: "Completed", desc: "Request fulfilled and closed", color: "bg-sage-mid/50 text-sage-dark border-sage-mid/40", icon: "✅" },
+    { status: "Pending", desc: "Submitted and waiting for review" },
+    { status: "Processing", desc: "Being handled by the team" },
+    { status: "Completed", desc: "Request fulfilled and closed" },
   ];
-  
+
   return (
     <>
       <Lead>
-        Want to check on a request? Look it up by request type or Case ID (that's basically your request number).
+        Look up any request by type or Case ID to see exactly where it stands.
       </Lead>
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-3 font-medium text-foreground">Tracking your stuff:</p>
-          <div className="space-y-2">
-            {[
-              { step: "Go to Requests section", icon: "📋" },
-              { step: "Find yours by type or Case ID", icon: "🔍" },
-              { step: "Use Search/Filter if you have lots of requests", icon: "⚙️" },
-              { step: "Check the status tag", icon: "🏷️" },
-              { step: "Click it to see the full story", icon: "👆" },
-            ].map(({ step, icon }, i) => (
-              <div key={i} className="flex items-start gap-3 text-sm">
-                <span className="text-lg">{icon}</span>
-                <p className="text-muted-foreground">{step}</p>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-3 font-medium text-foreground">What the statuses mean:</p>
-          <div className="space-y-3">
-            {statuses.map(({ status, desc, color, icon }) => (
-              <div key={status} className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${color}`}>
-                <span className="text-xl">{icon}</span>
-                <div>
-                  <p className="font-medium text-sm">{status}</p>
-                  <p className="text-xs">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <Panel title="How to find a request">
+        <Steps
+          items={[
+            "Open the Requests section",
+            "Find yours by request type or Case ID",
+            "Use search and filters if you have many requests",
+            "Check the status tag, then open it for the full history",
+          ]}
+        />
+      </Panel>
 
-        <div className="rounded-2xl border border-sage-mid/40 bg-sage-light/40 p-4">
-          <p className="mb-2 text-sm font-semibold text-sage-dark">💡 Pro tip</p>
-          <p className="text-sm text-foreground">
-            Check in on your requests from time to time. If we need more info, the faster you reply, the faster we can help.
-          </p>
+      <Panel title="What the statuses mean">
+        <div className="flex gap-2">
+          {statuses.map((s) => (
+            <button
+              key={s.status}
+              onClick={() => setSelected(s.status)}
+              aria-pressed={selected === s.status}
+              className={`flex-1 rounded-xl border px-3 py-2 text-sm font-medium transition-colors ${
+                selected === s.status
+                  ? "border-accent bg-accent/10"
+                  : "border-border/70 text-muted-foreground hover:border-accent/60"
+              }`}
+            >
+              {s.status}
+            </button>
+          ))}
         </div>
-      </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          {statuses.find((s) => s.status === selected)?.desc}
+        </p>
+      </Panel>
+
+      <Tip title="Pro tip">
+        Check back on open requests — the faster you answer follow-up questions, the faster they
+        close.
+      </Tip>
     </>
   );
 }
 
-function NewsStep() {
-  return <TrackingStep />;
-}
-
-function ChatStep() {
+function AccountStep() {
   return (
     <>
       <Lead>
-        Here's where you update your account info and learn about the request guidelines (spoiler: they're pretty straightforward).
+        Update your account details here, and keep these request guidelines in mind.
       </Lead>
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-3 font-medium text-foreground">You can change:</p>
-          <div className="space-y-2">
-            {[
-              { icon: "👤", label: "Username", desc: "Your display name" },
-              { icon: "📱", label: "Phone number", desc: "Contact number" },
-              { icon: "🔒", label: "Password", desc: "Login password" },
-              { icon: "🔐", label: "Two-Factor Authentication", desc: "Extra security with Google Authenticator" },
-            ].map(({ icon, label, desc }) => (
-              <div key={label} className="flex items-center gap-3 text-sm">
-                <span className="text-lg">{icon}</span>
-                <div>
-                  <p className="font-medium text-foreground">{label}</p>
-                  <p className="text-xs text-muted-foreground">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Click your profile picture (top-right corner) → My Account
-          </p>
-        </div>
 
-        <div className="rounded-2xl border border-sage-light bg-white/60 p-5">
-          <p className="mb-3 font-medium text-foreground">A few guidelines to keep in mind:</p>
-          <div className="space-y-3">
-            {[
-              { num: "1", text: "POCs only", desc: "Only authorized POCs can submit (that's you!)" },
-              { num: "2", text: "Double-check everything", desc: "Names, plates, items — make sure it's right" },
-              { num: "3", text: "Plan ahead", desc: "Submit at least 24 hours before you need it" },
-              { num: "4", text: "Keep us updated", desc: "POC changed? Let us know" },
-            ].map(({ num, text, desc }) => (
-              <div key={num} className="flex items-start gap-3">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sage-dark text-xs font-bold text-primary-foreground">
-                  {num}
-                </span>
-                <div className="text-sm">
-                  <p className="font-medium text-foreground">{text}</p>
-                  <p className="text-xs text-muted-foreground">{desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <Panel title="Profile picture → My Account">
+        <Rows
+          items={[
+            { label: "Username", desc: "Your display name" },
+            { label: "Phone number", desc: "Contact number" },
+            { label: "Password", desc: "Login password" },
+            { label: "Two-factor authentication", desc: "Extra security via Google Authenticator" },
+          ]}
+        />
+      </Panel>
 
-        <div className="rounded-2xl border border-sage-mid/40 bg-sage-light/40 p-4">
-          <p className="mb-2 text-sm font-semibold text-sage-dark">💡 Not a POC?</p>
-          <p className="text-sm text-foreground">
-            No worries — just ask your designated POC to submit the request for you. They'll know what to do.
-          </p>
-        </div>
-      </div>
+      <Panel title="Request guidelines">
+        <Steps
+          items={[
+            "Only authorised POCs can submit requests",
+            "Double-check names, plates and item lists",
+            "Submit at least 24 hours before you need it",
+            "Tell the facility team if the POC changes",
+          ]}
+        />
+      </Panel>
+
+      <Tip title="Not a POC?">
+        Ask your designated point of contact to submit the request on your behalf.
+      </Tip>
     </>
   );
 }
@@ -861,55 +818,49 @@ function StepBody({ stepKey }: { stepKey: (typeof STEPS)[number]["key"] }) {
     case "tracking":
       return <TrackingStep />;
     case "chat":
-      return <ChatStep />;
+      return <AccountStep />;
   }
 }
 
+/* ---------- finish ---------- */
+
 function Finish({ onRestart, onJump }: { onRestart: () => void; onJump: (n: number) => void }) {
   return (
-    <section className="animate-step-in text-center">
-      <div className="mb-8 inline-block rounded-full bg-sage-light/20 p-1">
-        <img
-          src={concierge}
-          alt="A smiling facility coordinator at the Agila Subic reception"
-          width={512}
-          height={512}
-          loading="lazy"
-          className="h-24 w-24 rounded-full object-cover outline-4 outline-white"
-        />
-      </div>
-      <h2 className="mb-4 flex items-center justify-center gap-2 text-3xl font-light text-foreground">
-        <Star className="h-6 w-6 fill-sage-mid text-sage-mid" />
-        That's it!
-      </h2>
-      <p className="mx-auto mb-10 max-w-md text-muted-foreground">
-        You're good to go. Jump into the web portal or grab the mobile app whenever you need to handle requests at Agila Subic.
+    <section className="animate-step-in flex flex-col items-center text-center">
+      <Lockup />
+
+      <span className="mt-12 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
+        <Check className="h-5 w-5" />
+      </span>
+
+      <h2 className="mt-6 font-display text-3xl font-semibold tracking-tight">You're all set</h2>
+      <p className="mt-4 max-w-md text-muted-foreground">
+        Sign in on the web portal or the mobile app whenever you need to raise or follow up on a
+        request at Agila Subic.
       </p>
 
-      <div className="mb-10 grid gap-3 text-left sm:grid-cols-2">
-        {STEPS.map((s, i) => {
-          const Icon: LucideIcon = s.icon;
-          return (
-            <button
-              key={s.key}
-              onClick={() => onJump(i + 1)}
-              className="flex items-center gap-3 rounded-2xl border border-sage-light bg-white/60 px-5 py-3 text-sm transition-colors hover:border-sage-mid"
-            >
-              <Icon className="h-4 w-4 shrink-0 text-sage-dark/60" />
-              <span>
-                <span className="font-medium text-foreground">{s.title}</span>
-                <span className="block text-xs text-muted-foreground">Revisit this step</span>
-              </span>
-            </button>
-          );
-        })}
+      <div className="mt-12 grid w-full gap-3 sm:grid-cols-2">
+        {STEPS.map((s, i) => (
+          <button
+            key={s.key}
+            onClick={() => onJump(i + 1)}
+            className={`flex items-center gap-3 rounded-2xl border border-border/70 bg-card p-4 text-left text-sm font-medium transition-colors hover:border-accent/60 ${
+              i === STEPS.length - 1 ? "sm:col-span-2" : ""
+            }`}
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold">
+              {i + 1}
+            </span>
+            {s.title}
+          </button>
+        ))}
       </div>
 
       <button
         onClick={onRestart}
-        className="w-full rounded-2xl border border-sage-mid/30 bg-white py-4 font-display font-medium text-sage-dark transition-colors hover:bg-sage-light/20"
+        className="mt-12 rounded-full border border-border px-8 py-3 text-sm font-medium transition-colors hover:border-accent"
       >
-        Start over from the beginning
+        Start over
       </button>
     </section>
   );
