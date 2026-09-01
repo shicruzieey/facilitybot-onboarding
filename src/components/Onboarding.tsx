@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   QrCode,
@@ -16,27 +15,6 @@ import {
 import logo from "@/assets/agila-subic-logo.png";
 import facilitybotLogo from "@/assets/facilitybot-logo.png";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "FacilityBot Onboarding — Agila Subic facility guide" },
-      {
-        name: "description",
-        content:
-          "A simple, seven-step walkthrough of FacilityBot: access, visitors and deliveries, item removal, service requests, tracking and account support.",
-      },
-      { property: "og:title", content: "FacilityBot Onboarding — Agila Subic" },
-      {
-        property: "og:description",
-        content: "A calm, seven-step guide to facility services at the Agila Subic shipyard campus.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Onboarding,
-});
-
 const STEPS = [
   { key: "qr", title: "How to Access", short: "Access", icon: QrCode },
   { key: "menu", title: "Key Features", short: "Features", icon: LayoutGrid },
@@ -49,7 +27,7 @@ const STEPS = [
 
 const STORAGE_KEY = "facilitybot-onboarding-v1";
 
-function Onboarding() {
+export default function Onboarding() {
   // 0 = welcome, 1..7 = steps, 8 = finish
   const [phase, setPhase] = useState(0);
   const [done, setDone] = useState<number[]>([]);
