@@ -32,6 +32,7 @@ export default function Onboarding() {
   const [phase, setPhase] = useState(0);
   const [done, setDone] = useState<number[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const total = STEPS.length;
 
   useEffect(() => {
@@ -58,8 +59,17 @@ export default function Onboarding() {
 
   const complete = (n: number) => setDone((d) => (d.includes(n) ? d : [...d, n]));
 
+  const handlePhaseChange = (newPhase: number) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setPhase(newPhase);
+      setIsTransitioning(false);
+    }, 150);
+  };
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (isTransitioning) return;
       const el = document.activeElement;
       if (
         el instanceof HTMLInputElement ||
@@ -67,40 +77,43 @@ export default function Onboarding() {
         el instanceof HTMLSelectElement
       )
         return;
-      if (e.key === "ArrowRight")
-        setPhase((p) => {
-          if (p >= 1 && p <= total) complete(p);
-          return Math.min(p + 1, total + 1);
-        });
-      if (e.key === "ArrowLeft") setPhase((p) => Math.max(p - 1, 0));
+      if (e.key === "ArrowRight") {
+        const currentPhase = phase;
+        if (currentPhase >= 1 && currentPhase <= total) complete(currentPhase);
+        handlePhaseChange(Math.min(currentPhase + 1, total + 1));
+      }
+      if (e.key === "ArrowLeft") {
+        handlePhaseChange(Math.max(phase - 1, 0));
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [total]);
+  }, [phase, total, isTransitioning]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-16">
-        {phase === 0 && (
-          <Welcome
-            done={done}
-            onStart={() => setPhase(done.length > 0 ? Math.min(done.length + 1, total) : 1)}
-            onJump={setPhase}
-            onReset={() => setDone([])}
-          />
-        )}
+        <div className={isTransitioning ? "animate-step-out" : "animate-step-in"}>
+          {phase === 0 && (
+            <Welcome
+              done={done}
+              onStart={() => handlePhaseChange(done.length > 0 ? Math.min(done.length + 1, total) : 1)}
+              onJump={handlePhaseChange}
+              onReset={() => setDone([])}
+            />
+          )}
 
-        {phase > 0 && phase <= total && (
-          <StepView
-            key={phase}
-            index={phase}
-            total={total}
-            done={done}
-            onJump={setPhase}
-            onBack={() => setPhase(phase - 1)}
+          {phase > 0 && phase <= total && (
+            <StepView
+              key={phase}
+              index={phase}
+              total={total}
+              done={done}
+              onJump={handlePhaseChange}
+              onBack={() => handlePhaseChange(phase - 1)}
             onNext={() => {
               complete(phase);
-              setPhase(phase + 1);
+              handlePhaseChange(phase + 1);
             }}
           />
         )}
@@ -109,11 +122,12 @@ export default function Onboarding() {
           <Finish
             onRestart={() => {
               setDone([]);
-              setPhase(0);
+              handlePhaseChange(0);
             }}
-            onJump={setPhase}
+            onJump={handlePhaseChange}
           />
         )}
+        </div>
       </main>
     </div>
   );
@@ -233,7 +247,7 @@ function Welcome({
   const next = Math.min(done.length + 1, STEPS.length);
 
   return (
-    <section className="animate-step-in flex flex-col items-center text-center">
+    <section className="flex flex-col items-center text-center">
       <Lockup />
 
       <h1 className="mt-12 font-display text-4xl font-semibold tracking-tight">
@@ -317,7 +331,7 @@ function StepView({
   const Icon: LucideIcon = step.icon;
 
   return (
-    <section className="animate-step-in">
+    <section>
       <div className="mb-10 flex items-center justify-between gap-6">
         <Lockup />
         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -833,7 +847,7 @@ function StepBody({ stepKey }: { stepKey: (typeof STEPS)[number]["key"] }) {
 
 function Finish({ onRestart, onJump }: { onRestart: () => void; onJump: (n: number) => void }) {
   return (
-    <section className="animate-step-in flex flex-col items-center text-center">
+    <section className="flex flex-col items-center text-center">
       <Lockup />
 
       <span className="mt-12 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
