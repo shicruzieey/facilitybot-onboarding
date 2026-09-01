@@ -19,7 +19,7 @@ const STEPS = [
   { key: "qr", title: "How to Access", short: "Access", icon: QrCode },
   { key: "menu", title: "Key Features", short: "Features", icon: LayoutGrid },
   { key: "visitor", title: "Visitors & Deliveries", short: "Visitors", icon: UserPlus },
-  { key: "gatepass", title: "Removing Items", short: "Removals", icon: PackageCheck },
+  { key: "gatepass", title: "Pull-out Items", short: "Pull-out", icon: PackageCheck },
   { key: "service", title: "Service Requests", short: "Service", icon: Wrench },
   { key: "tracking", title: "Track Your Requests", short: "Tracking", icon: ListChecks },
   { key: "chat", title: "Account & Support", short: "Account", icon: UserCog },
@@ -492,7 +492,7 @@ function MenuStep() {
       title: "Requests",
       desc: "Submit and track all your requests",
       detail:
-        "This is where you'll register visitors, request item removals, and report facility issues. You can check the progress of each request until it's completed.",
+        "This is where you'll register visitors, request item pull-outs, and report facility issues. You can check the progress of each request until it's completed.",
     },
     {
       title: "Broadcasts",
@@ -609,7 +609,7 @@ function VisitorStep() {
       </PracticeForm>
 
       <Tip title="Important reminder">
-        If visitors are bringing items that will leave later, make sure to link that removal request back to this entry.
+        If visitors are bringing items that will be pulled out later, make sure to link that pull-out request back to this entry.
       </Tip>
     </>
   );
@@ -622,13 +622,13 @@ function GatepassStep() {
   return (
     <>
       <Lead>
-        Need to take tools, equipment, or materials out of the shipyard? Submit a removal request first. Security will check everything at the gate.
+        Need to take tools, equipment, or materials out of the shipyard? Submit a pull-out request first. Security will check everything at the gate.
       </Lead>
 
       <Panel title="What information to include">
         <Rows
           items={[
-            { label: "Complete list of items", desc: "Describe each item you're removing in detail" },
+            { label: "Complete list of items", desc: "Describe each item you're pulling out in detail" },
             { label: "Photos (if required)", desc: "Needed for waste, garbage, or hazardous materials" },
             { label: "Original delivery reference", desc: "Link to the request when these items came in, if applicable" },
           ]}
@@ -636,7 +636,7 @@ function GatepassStep() {
       </Panel>
 
       <PracticeForm>
-        <Field label="What are you removing? (required)">
+        <Field label="What are you pulling out? (required)">
           <textarea
             rows={3}
             value={desc}
@@ -746,7 +746,7 @@ function TrackingStep() {
         <Steps
           items={[
             "Click on the Requests section in the menu",
-            "Look for your request by type (Visitor, Removal, Service) or reference number",
+            "Look for your request by type (Visitor, Pull-out, Service) or reference number",
             "Use the search bar if you have many requests",
             "Click on a request to see its full history and current status",
           ]}
