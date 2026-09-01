@@ -61,11 +61,10 @@ export default function Onboarding() {
 
   const handlePhaseChange = (newPhase: number) => {
     setIsTransitioning(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => {
       setPhase(newPhase);
-      setTimeout(() => setIsTransitioning(false), 50);
-    }, 200);
+      setIsTransitioning(false);
+    }, 100);
   };
 
   useEffect(() => {
@@ -94,10 +93,7 @@ export default function Onboarding() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-16">
-        <div 
-          className={`transition-opacity duration-200 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
-          style={{ minHeight: '500px' }}
-        >
+        <div className={isTransitioning ? "animate-step-out" : "animate-step-in"}>
           {phase === 0 && (
             <Welcome
               done={done}
