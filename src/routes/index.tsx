@@ -430,14 +430,43 @@ function QrStep() {
       {method === "web" ? (
         <>
           <Panel title="Signing in on the web">
-            <Steps
-              items={[
-                "Open agilasubic.facilitybot.co in your browser",
-                "Enter your email or company domain",
-                "Enter your password",
-                "Select Sign In",
-              ]}
-            />
+            <ol className="space-y-3">
+              <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
+                  1
+                </span>
+                <span className="pt-0.5">
+                  Open{" "}
+                  <a
+                    href="https://agilasubic.facilitybot.co"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-foreground underline decoration-accent decoration-2 underline-offset-2 transition-colors hover:text-accent"
+                  >
+                    agilasubic.facilitybot.co
+                  </a>{" "}
+                  in your browser
+                </span>
+              </li>
+              <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
+                  2
+                </span>
+                <span className="pt-0.5">Enter your email or company domain</span>
+              </li>
+              <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
+                  3
+                </span>
+                <span className="pt-0.5">Enter your password</span>
+              </li>
+              <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
+                  4
+                </span>
+                <span className="pt-0.5">Select Sign In</span>
+              </li>
+            </ol>
           </Panel>
           <Tip title="Good to know">
             You can also sign in with Google Authenticator if two-factor is enabled on your account.
