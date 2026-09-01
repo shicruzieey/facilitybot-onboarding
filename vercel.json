@@ -1,6 +1,6 @@
 {
-  "framework": "tanstack-start",
-  "buildCommand": "npm run build",
+  "framework": null,
+  "buildCommand": "npm ci && npm run build",
   "outputDirectory": ".output/public",
   "installCommand": "npm ci"
 }
