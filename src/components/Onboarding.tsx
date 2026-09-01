@@ -437,31 +437,31 @@ function QrStep() {
                   >
                     agilasubic.facilitybot.co
                   </a>{" "}
-                  in your browser
+                  in any web browser (Chrome, Edge, Safari, etc.)
                 </span>
               </li>
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
                   2
                 </span>
-                <span className="pt-0.5">Enter your email or company domain</span>
+                <span className="pt-0.5">Type your work email address</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
                   3
                 </span>
-                <span className="pt-0.5">Enter your password</span>
+                <span className="pt-0.5">Type your password</span>
               </li>
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
                   4
                 </span>
-                <span className="pt-0.5">Select Sign In</span>
+                <span className="pt-0.5">Click the Sign In button</span>
               </li>
             </ol>
           </Panel>
-          <Tip title="Good to know">
-            You can also sign in with Google Authenticator if two-factor is enabled on your account.
+          <Tip title="Extra security">
+            If your account has extra security enabled, you'll also need to enter a 6-digit code from your authenticator app.
           </Tip>
         </>
       ) : (
@@ -469,15 +469,15 @@ function QrStep() {
           <Panel title="Setting up the app">
             <Steps
               items={[
-                'Search "FacilityBot" in the App Store or Google Play',
-                "Download and install it",
-                "Log in with the same email and password",
-                "Turn on notifications for request updates",
+                'On your phone, open the App Store (iPhone) or Play Store (Android)',
+                'Search for "FacilityBot" and download the app',
+                "Open the app and log in with your work email and password",
+                "Allow notifications so you get updates on your requests",
               ]}
             />
           </Panel>
-          <Tip title="Good to know">
-            Everything syncs between phone and desktop, so you can start a request anywhere.
+          <Tip title="Stay in sync">
+            Changes you make on your phone will show up on the website, and vice versa. They're always connected.
           </Tip>
         </>
       )}
@@ -490,22 +490,22 @@ function MenuStep() {
   const features = [
     {
       title: "Requests",
-      desc: "Create, access, track and update your requests",
+      desc: "Submit and track all your requests",
       detail:
-        "This is where you raise visitor entries, item removals and service requests — and where you follow their status until they close.",
+        "This is where you'll register visitors, request item removals, and report facility issues. You can check the progress of each request until it's completed.",
     },
     {
       title: "Broadcasts",
-      desc: "Announcements and advisories from the facility team",
+      desc: "Important announcements from the facility team",
       detail:
-        "Power interruptions, road works, drills and safety advisories are posted here. Check it before planning site activity.",
+        "Check here for updates about power outages, construction work, safety drills, and other facility news. It's a good idea to review this before planning any work on site.",
     },
   ];
 
   return (
     <>
       <Lead>
-        There are two main areas after you sign in. You will spend most of your time in Requests.
+        After signing in, you'll see two main sections. Most of your work happens in Requests.
       </Lead>
 
       <div className="space-y-3">
@@ -543,8 +543,8 @@ function MenuStep() {
         })}
       </div>
 
-      <Tip title="Preview pane">
-        Your most recent requests appear on the main screen the moment you sign in.
+      <Tip title="Your dashboard">
+        When you first log in, you'll see your most recent requests right on the home screen.
       </Tip>
     </>
   );
@@ -558,59 +558,58 @@ function VisitorStep() {
   return (
     <>
       <Lead>
-        Use this for visitors, guests or deliveries coming into the shipyard. Declare who is coming,
-        what vehicles they bring, and any equipment with them.
+        Register any visitors, guests, or deliveries coming to the shipyard. You'll need to provide their names, vehicle details, and what they're bringing.
       </Lead>
 
-      <Panel title="What to include">
+      <Panel title="What information to include">
         <Rows
           items={[
-            { label: "Full names", desc: "Everyone entering the campus" },
-            { label: "Plate numbers", desc: "Any vehicles coming in" },
-            { label: "Items & equipment", desc: "Anything they are bringing with them" },
+            { label: "Full names", desc: "First and last name of each person visiting" },
+            { label: "Vehicle license plates", desc: "All cars, trucks, or vans entering the site" },
+            { label: "Items being brought in", desc: "Tools, equipment, or materials they're carrying" },
           ]}
         />
       </Panel>
 
       <PracticeForm>
-        <Field label="Visitor names *">
+        <Field label="Visitor names (required)">
           <textarea
             rows={2}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Full names of all visitors"
+            placeholder="Example: John Smith, Maria Garcia"
             className={inputClass}
           />
         </Field>
-        <Field label="Vehicle plate number(s)">
+        <Field label="Vehicle license plate number(s)">
           <input
             type="text"
             value={vehicle}
             onChange={(e) => setVehicle(e.target.value)}
-            placeholder="e.g. ABC 1234"
+            placeholder="Example: ABC 1234, XYZ 5678"
             className={inputClass}
           />
         </Field>
-        <Field label="Items / equipment brought in">
+        <Field label="Items or equipment being brought in">
           <textarea
             rows={2}
             value={items}
             onChange={(e) => setItems(e.target.value)}
-            placeholder="List all items being brought in"
+            placeholder="Example: Laptop, safety helmet, toolbox"
             className={inputClass}
           />
         </Field>
         {(name || vehicle || items) && (
           <p className="text-sm text-muted-foreground">
             Preview: <span className="font-medium text-foreground">{name || "Visitor"}</span>
-            {vehicle ? ` · ${vehicle}` : ""}
-            {items ? ` · ${items}` : ""}
+            {vehicle ? ` · Vehicle: ${vehicle}` : ""}
+            {items ? ` · Bringing: ${items}` : ""}
           </p>
         )}
       </PracticeForm>
 
-      <Tip title="Heads up">
-        If something comes in now but leaves later, link the removal request back to this delivery.
+      <Tip title="Important reminder">
+        If visitors are bringing items that will leave later, make sure to link that removal request back to this entry.
       </Tip>
     </>
   );
@@ -623,50 +622,48 @@ function GatepassStep() {
   return (
     <>
       <Lead>
-        Use this to take items or equipment out of the campus. If the items were delivered earlier,
-        make sure they were declared on the way in.
+        Need to take tools, equipment, or materials out of the shipyard? Submit a removal request first. Security will check everything at the gate.
       </Lead>
 
-      <Panel title="What to include">
+      <Panel title="What information to include">
         <Rows
           items={[
-            { label: "List of items to remove", desc: "Complete details and descriptions" },
-            { label: "Photos for hazardous items", desc: "Required for waste, garbage or hazardous materials" },
-            { label: "Link to the original delivery", desc: "If the items were brought in earlier" },
+            { label: "Complete list of items", desc: "Describe each item you're removing in detail" },
+            { label: "Photos (if required)", desc: "Needed for waste, garbage, or hazardous materials" },
+            { label: "Original delivery reference", desc: "Link to the request when these items came in, if applicable" },
           ]}
         />
       </Panel>
 
       <PracticeForm>
-        <Field label="Equipment / items description *">
+        <Field label="What are you removing? (required)">
           <textarea
             rows={3}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
-            placeholder="Equipment, tools or materials to be removed"
+            placeholder="Example: 2 oxygen tanks, welding torch, power drill"
             className={inputClass}
           />
         </Field>
-        <Field label="Dock location *">
+        <Field label="Where is it located? (required)">
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g. Dry Dock 1, Building A"
+            placeholder="Example: Dry Dock 2, near crane"
             className={inputClass}
           />
         </Field>
         {desc && location && (
           <p className="text-sm text-muted-foreground">
-            Ready to submit — a case ID like{" "}
-            <span className="font-medium text-foreground">AGL-2471</span> would be issued.
+            Once submitted, you'll receive a reference number like{" "}
+            <span className="font-medium text-foreground">AGL-2471</span>. Show this to security at the gate.
           </p>
         )}
       </PracticeForm>
 
-      <Tip title="Quick reminder">
-        Guards check everything at the gate against what you listed, so review the details before
-        submitting.
+      <Tip title="Double-check before submitting">
+        Security will verify everything against your list at the exit gate, so make sure all details are accurate.
       </Tip>
     </>
   );
@@ -679,13 +676,12 @@ function ServiceStep() {
   return (
     <>
       <Lead>
-        Raise a service request for anything broken or not working — power, water, lift station and
-        general support.
+        Report any facility problems or request services like power, water, lift access, or emergency support.
       </Lead>
 
-      <Panel title="What you can request">
+      <Panel title="Types of service requests">
         <div className="grid gap-2 sm:grid-cols-2">
-          {["Power supply", "Water supply", "Lift station", "Support services"].map((label) => (
+          {["Power supply issues", "Water problems", "Lift or crane access", "Emergency services"].map((label) => (
             <div
               key={label}
               className="rounded-xl border border-border/70 px-4 py-2.5 text-sm font-medium"
@@ -695,39 +691,38 @@ function ServiceStep() {
           ))}
         </div>
         <p className="mt-4 text-sm text-muted-foreground">
-          Support services covers ambulance, fire truck, training sessions and other facility needs.
+          Emergency services include ambulance, fire response, and safety training sessions.
         </p>
       </Panel>
 
       <PracticeForm>
-        <Field label="Fault description *">
+        <Field label="What's the problem? (required)">
           <textarea
             rows={3}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
-            placeholder="Describe the issue in detail"
+            placeholder="Example: Power outlet not working, water pipe leaking"
             className={inputClass}
           />
         </Field>
-        <Field label="Fault location *">
+        <Field label="Where is it? (required)">
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g. Building A, Floor 2, Room 201"
+            placeholder="Example: Building A, Floor 2, Room 201"
             className={inputClass}
           />
         </Field>
         {desc && location && (
           <p className="text-sm text-muted-foreground">
-            Logged as <span className="font-medium text-foreground">Pending</span> — the helpdesk
-            picks it up from here.
+            Your request will be marked as <span className="font-medium text-foreground">Pending</span> and the facility team will review it shortly.
           </p>
         )}
       </PracticeForm>
 
-      <Tip title="Also available">
-        HSE induction bookings and Talk to Agent live chat with the helpdesk team.
+      <Tip title="Need help now?">
+        You can also chat directly with the helpdesk team or book HSE safety training sessions through the app.
       </Tip>
     </>
   );
@@ -736,29 +731,29 @@ function ServiceStep() {
 function TrackingStep() {
   const [selected, setSelected] = useState("Pending");
   const statuses = [
-    { status: "Pending", desc: "Submitted and waiting for review" },
-    { status: "Processing", desc: "Being handled by the team" },
-    { status: "Completed", desc: "Request fulfilled and closed" },
+    { status: "Pending", desc: "Your request has been received and is waiting to be reviewed" },
+    { status: "Processing", desc: "The team is currently working on your request" },
+    { status: "Completed", desc: "Your request has been finished and closed" },
   ];
 
   return (
     <>
       <Lead>
-        Look up any request by type or Case ID to see exactly where it stands.
+        Find any of your requests by searching for its reference number or by type. You can see exactly what stage it's at.
       </Lead>
 
-      <Panel title="How to find a request">
+      <Panel title="How to find your requests">
         <Steps
           items={[
-            "Open the Requests section",
-            "Find yours by request type or Case ID",
-            "Use search and filters if you have many requests",
-            "Check the status tag, then open it for the full history",
+            "Click on the Requests section in the menu",
+            "Look for your request by type (Visitor, Removal, Service) or reference number",
+            "Use the search bar if you have many requests",
+            "Click on a request to see its full history and current status",
           ]}
         />
       </Panel>
 
-      <Panel title="What the statuses mean">
+      <Panel title="Understanding request statuses">
         <div className="flex gap-2">
           {statuses.map((s) => (
             <button
@@ -780,9 +775,8 @@ function TrackingStep() {
         </p>
       </Panel>
 
-      <Tip title="Pro tip">
-        Check back on open requests — the faster you answer follow-up questions, the faster they
-        close.
+      <Tip title="Stay updated">
+        Check back on open requests regularly. The faster you respond to any questions from the team, the quicker your request gets completed.
       </Tip>
     </>
   );
@@ -792,33 +786,33 @@ function AccountStep() {
   return (
     <>
       <Lead>
-        Update your account details here, and keep these request guidelines in mind.
+        Manage your account settings and review important guidelines for submitting requests.
       </Lead>
 
-      <Panel title="Profile picture → My Account">
+      <Panel title="Update your profile (click your profile picture, then My Account)">
         <Rows
           items={[
-            { label: "Username", desc: "Your display name" },
-            { label: "Phone number", desc: "Contact number" },
-            { label: "Password", desc: "Login password" },
-            { label: "Two-factor authentication", desc: "Extra security via Google Authenticator" },
+            { label: "Display name", desc: "The name that appears on your requests" },
+            { label: "Phone number", desc: "Your contact number for urgent updates" },
+            { label: "Password", desc: "Change your login password" },
+            { label: "Extra security", desc: "Turn on 6-digit code protection for added security" },
           ]}
         />
       </Panel>
 
-      <Panel title="Request guidelines">
+      <Panel title="Important guidelines for requests">
         <Steps
           items={[
-            "Only authorised POCs can submit requests",
-            "Double-check names, plates and item lists",
-            "Submit at least 24 hours before you need it",
-            "Tell the facility team if the POC changes",
+            "Only authorized contact persons can submit requests for their company",
+            "Double-check all names, license plates, and item lists before submitting",
+            "Submit requests at least 24 hours before you need them processed",
+            "Notify the facility team if your company's contact person changes",
           ]}
         />
       </Panel>
 
-      <Tip title="Not a POC?">
-        Ask your designated point of contact to submit the request on your behalf.
+      <Tip title="Not an authorized person?">
+        Ask your company's designated contact person to submit requests on your behalf.
       </Tip>
     </>
   );
