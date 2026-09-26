@@ -14,6 +14,21 @@ import {
 } from "lucide-react";
 import logo from "@/assets/agila-subic-logo.png";
 import facilitybotLogo from "@/assets/facilitybot-logo.png";
+import qrPlacard from "@/assets/qr-placard.jpg";
+import concierge from "@/assets/concierge.jpg";
+import {
+  AccountScreen,
+  AppScreen,
+  Callouts,
+  DashboardScreen,
+  Lesson,
+  LoginScreen,
+  PhotoCard,
+  PulloutScreen,
+  ServiceScreen,
+  TrackingScreen,
+  VisitorScreen,
+} from "./TutorialVisuals";
 
 const STEPS = [
   { key: "qr", title: "How to Access", short: "Access", icon: QrCode },
@@ -92,7 +107,7 @@ export default function Onboarding() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-16">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-5 py-10 sm:px-8 sm:py-14">
         <div className={isTransitioning ? "animate-step-out" : "animate-step-in"}>
           {phase === 0 && (
             <Welcome
@@ -111,22 +126,22 @@ export default function Onboarding() {
               done={done}
               onJump={handlePhaseChange}
               onBack={() => handlePhaseChange(phase - 1)}
-            onNext={() => {
-              complete(phase);
-              handlePhaseChange(phase + 1);
-            }}
-          />
-        )}
+              onNext={() => {
+                complete(phase);
+                handlePhaseChange(phase + 1);
+              }}
+            />
+          )}
 
-        {phase === total + 1 && (
-          <Finish
-            onRestart={() => {
-              setDone([]);
-              handlePhaseChange(0);
-            }}
-            onJump={handlePhaseChange}
-          />
-        )}
+          {phase === total + 1 && (
+            <Finish
+              onRestart={() => {
+                setDone([]);
+                handlePhaseChange(0);
+              }}
+              onJump={handlePhaseChange}
+            />
+          )}
         </div>
       </main>
     </div>
@@ -153,45 +168,14 @@ function Lockup() {
 
 function Panel({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+    <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
       {title && (
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           {title}
         </p>
       )}
       {children}
     </div>
-  );
-}
-
-function Rows({ items }: { items: { label: string; desc?: string }[] }) {
-  return (
-    <ul className="divide-y divide-border/60">
-      {items.map((it) => (
-        <li key={it.label} className="flex gap-3 py-3 first:pt-0 last:pb-0">
-          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
-          <div>
-            <p className="text-sm font-medium text-foreground">{it.label}</p>
-            {it.desc && <p className="text-sm text-muted-foreground">{it.desc}</p>}
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function Steps({ items }: { items: string[] }) {
-  return (
-    <ol className="space-y-3">
-      {items.map((s, i) => (
-        <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
-            {i + 1}
-          </span>
-          <span className="pt-0.5">{s}</span>
-        </li>
-      ))}
-    </ol>
   );
 }
 
@@ -224,7 +208,7 @@ const inputClass =
 
 function PracticeForm({ children }: { children: React.ReactNode }) {
   return (
-    <Panel title="Practice form — nothing is submitted">
+    <Panel title="Practice — nothing is submitted">
       <div className="space-y-4">{children}</div>
     </Panel>
   );
@@ -250,14 +234,29 @@ function Welcome({
     <section className="flex flex-col items-center text-center">
       <Lockup />
 
-      <h1 className="mt-12 font-display text-4xl font-semibold tracking-tight">
+      <h1 className="mt-10 font-display text-4xl font-semibold tracking-tight">
         Welcome to FacilityBot
       </h1>
-      <p className="mt-4 max-w-md text-muted-foreground">
-        Seven short steps on how to raise and track requests at the Agila Subic shipyard campus.
+      <p className="mt-3 max-w-lg text-muted-foreground">
+        A short visual guide to raising and tracking requests at the Agila Subic shipyard.
       </p>
 
-      <div className="mt-12 grid w-full gap-3 sm:grid-cols-2">
+      <div className="mt-10 grid w-full gap-4 sm:grid-cols-2">
+        <PhotoCard
+          src={qrPlacard}
+          alt="QR code placard on a wall beside a door"
+          caption="Scan campus QR codes or open the web portal."
+          className="h-44 sm:h-52"
+        />
+        <PhotoCard
+          src={concierge}
+          alt="Facility team member ready to help"
+          caption="The facility team is here if you get stuck."
+          className="h-44 sm:h-52"
+        />
+      </div>
+
+      <div className="mt-10 grid w-full gap-3 sm:grid-cols-2">
         {STEPS.map((s, i) => {
           const n = i + 1;
           const isDone = done.includes(n);
@@ -289,7 +288,7 @@ function Welcome({
 
       <button
         onClick={onStart}
-        className="mt-12 rounded-full bg-foreground px-10 py-4 font-medium text-primary-foreground transition-transform hover:shadow-lg active:scale-95"
+        className="mt-10 rounded-full bg-foreground px-10 py-4 font-medium text-primary-foreground transition-transform hover:shadow-lg active:scale-95"
       >
         {started ? "Continue where you left off" : "Start onboarding"}
       </button>
@@ -332,14 +331,14 @@ function StepView({
 
   return (
     <section>
-      <div className="mb-10 flex items-center justify-between gap-6">
+      <div className="mb-8 flex items-center justify-between gap-6">
         <Lockup />
         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Step {index} of {total}
         </span>
       </div>
 
-      <div className="mb-10 flex gap-1.5" role="tablist" aria-label="Onboarding steps">
+      <div className="mb-8 flex gap-1.5" role="tablist" aria-label="Onboarding steps">
         {STEPS.map((s, i) => {
           const n = i + 1;
           const active = n === index;
@@ -372,7 +371,7 @@ function StepView({
         <StepBody stepKey={step.key} />
       </div>
 
-      <div className="mt-12 flex items-center justify-between border-t border-border/70 pt-6">
+      <div className="mt-10 flex items-center justify-between border-t border-border/70 pt-6">
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -420,133 +419,112 @@ function QrStep() {
       </div>
 
       {method === "web" ? (
-        <>
-          <Panel title="Signing in on the web">
-            <ol className="space-y-3">
-              <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
-                  1
-                </span>
-                <span className="pt-0.5">
-                  Open{" "}
-                  <a
-                    href="https://agilasubic.facilitybot.co"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-foreground underline decoration-accent decoration-2 underline-offset-2 transition-colors hover:text-accent"
-                  >
-                    agilasubic.facilitybot.co
-                  </a>{" "}
-                  in any web browser (Chrome, Edge, Safari, etc.)
-                </span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
-                  2
-                </span>
-                <span className="pt-0.5">Type your work email address</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
-                  3
-                </span>
-                <span className="pt-0.5">Type your password</span>
-              </li>
-              <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
-                  4
-                </span>
-                <span className="pt-0.5">Click the Sign In button</span>
-              </li>
-            </ol>
-          </Panel>
+        <Lesson visual={<LoginScreen />}>
+          <Callouts
+            items={[
+              "Open agilasubic.facilitybot.co in Chrome, Edge, or Safari.",
+              "Type your work email.",
+              "Type your password.",
+              "Click Sign In.",
+            ]}
+          />
+          <p className="text-sm">
+            <a
+              href="https://agilasubic.facilitybot.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground underline decoration-accent decoration-2 underline-offset-2 transition-colors hover:text-accent"
+            >
+              agilasubic.facilitybot.co
+            </a>
+          </p>
+          <PhotoCard
+            src={qrPlacard}
+            alt="QR code on a wall near an entrance"
+            caption="QR codes around campus open this same login."
+            className="h-40"
+          />
           <Tip title="Extra security">
-            If your account has extra security enabled, you'll also need to enter a 6-digit code from your authenticator app.
+            If it is enabled, enter the 6-digit code from your authenticator app.
           </Tip>
-        </>
+        </Lesson>
       ) : (
-        <>
-          <Panel title="Setting up the app">
-            <Steps
-              items={[
-                'On your phone, open the App Store (iPhone) or Play Store (Android)',
-                'Search for "FacilityBot" and download the app',
-                "Open the app and log in with your work email and password",
-                "Allow notifications so you get updates on your requests",
-              ]}
-            />
-          </Panel>
+        <Lesson
+          visual={
+            <div className="space-y-4">
+              <AppScreen />
+              <PhotoCard
+                src={qrPlacard}
+                alt="QR code placard"
+                caption="You can still scan campus QR codes on your phone."
+                className="h-36"
+              />
+            </div>
+          }
+        >
+          <Callouts
+            items={[
+              "Open the App Store (iPhone) or Play Store (Android).",
+              'Search for "FacilityBot" and install it.',
+              "Log in with your work email and password.",
+              "Allow notifications so you get request updates.",
+            ]}
+          />
           <Tip title="Stay in sync">
-            Changes you make on your phone will show up on the website, and vice versa. They're always connected.
+            Phone and website share the same requests. Change one, see it on the other.
           </Tip>
-        </>
+        </Lesson>
       )}
     </>
   );
 }
 
 function MenuStep() {
-  const [open, setOpen] = useState<string | null>("Requests");
-  const features = [
-    {
-      title: "Requests",
-      desc: "Submit and track all your requests",
-      detail:
-        "This is where you'll register visitors, request item pull-outs, and report facility issues. You can check the progress of each request until it's completed.",
-    },
-    {
-      title: "Broadcasts",
-      desc: "Important announcements from the facility team",
-      detail:
-        "Check here for updates about power outages, construction work, safety drills, and other facility news. It's a good idea to review this before planning any work on site.",
-    },
-  ];
+  const [open, setOpen] = useState<"requests" | "broadcasts">("requests");
 
   return (
-    <>
-      <Lead>
-        After signing in, you'll see two main sections. Most of your work happens in Requests.
-      </Lead>
-
+    <Lesson visual={<DashboardScreen highlight={open} />}>
+      <Lead>After signing in you will see two main sections. Tap a card to preview it.</Lead>
       <div className="space-y-3">
-        {features.map((f) => {
-          const isOpen = open === f.title;
+        {(
+          [
+            {
+              key: "requests" as const,
+              n: 1,
+              title: "Requests",
+              desc: "Visitors, pull-outs, and facility issues — plus status until done.",
+            },
+            {
+              key: "broadcasts" as const,
+              n: 2,
+              title: "Broadcasts",
+              desc: "Outages, construction, drills, and other site news.",
+            },
+          ] as const
+        ).map((f) => {
+          const isOpen = open === f.key;
           return (
-            <div key={f.title} className="rounded-2xl border border-border/70 bg-card">
-              <button
-                onClick={() => setOpen(isOpen ? null : f.title)}
-                aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-4 p-5 text-left"
-              >
-                <span>
-                  <span className="block text-sm font-medium">{f.title}</span>
-                  <span className="block text-sm text-muted-foreground">{f.desc}</span>
-                </span>
-                <span
-                  className={`text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
-                >
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </button>
-              <div
-                className="grid transition-all duration-300 ease-out"
-                style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
-              >
-                <div className="overflow-hidden">
-                  <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">
-                    {f.detail}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <button
+              key={f.key}
+              onClick={() => setOpen(f.key)}
+              aria-pressed={isOpen}
+              className={`flex w-full items-start gap-3 rounded-2xl border bg-card p-4 text-left transition-colors ${
+                isOpen ? "border-accent" : "border-border/70 hover:border-accent/60"
+              }`}
+            >
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
+                {f.n}
+              </span>
+              <span>
+                <span className="block text-sm font-medium">{f.title}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{f.desc}</span>
+              </span>
+            </button>
           );
         })}
       </div>
-
-      <Tip title="Your dashboard">
-        When you first log in, you'll see your most recent requests right on the home screen.
-      </Tip>
-    </>
+      <Tip title="Your dashboard">Recent requests show on the home screen as soon as you log in.</Tip>
+    </Lesson>
   );
 }
 
@@ -557,20 +535,17 @@ function VisitorStep() {
 
   return (
     <>
-      <Lead>
-        Register any visitors, guests, or deliveries coming to the shipyard. You'll need to provide their names, vehicle details, and what they're bringing.
-      </Lead>
-
-      <Panel title="What information to include">
-        <Rows
+      <Lesson visual={<VisitorScreen />}>
+        <Lead>Register guests and deliveries before they arrive. Match the numbered fields on the screen.</Lead>
+        <Callouts
           items={[
-            { label: "Full names", desc: "First and last name of each person visiting" },
-            { label: "Vehicle license plates", desc: "All cars, trucks, or vans entering the site" },
-            { label: "Items being brought in", desc: "Tools, equipment, or materials they're carrying" },
+            "Full names of everyone visiting.",
+            "License plates of every vehicle.",
+            "Tools, equipment, or materials they are bringing in.",
           ]}
         />
-      </Panel>
-
+        <Tip title="Pull-out later?">Link the later pull-out request back to this visitor entry.</Tip>
+      </Lesson>
       <PracticeForm>
         <Field label="Visitor names (required)">
           <textarea
@@ -607,10 +582,6 @@ function VisitorStep() {
           </p>
         )}
       </PracticeForm>
-
-      <Tip title="Important reminder">
-        If visitors are bringing items that will be pulled out later, make sure to link that pull-out request back to this entry.
-      </Tip>
     </>
   );
 }
@@ -621,20 +592,17 @@ function GatepassStep() {
 
   return (
     <>
-      <Lead>
-        Need to take tools, equipment, or materials out of the shipyard? Submit a pull-out request first. Security will check everything at the gate.
-      </Lead>
-
-      <Panel title="What information to include">
-        <Rows
+      <Lesson visual={<PulloutScreen />}>
+        <Lead>Submit a pull-out before tools or materials leave the shipyard. Security checks the list at the gate.</Lead>
+        <Callouts
           items={[
-            { label: "Complete list of items", desc: "Describe each item you're pulling out in detail" },
-            { label: "Photos (if required)", desc: "Needed for waste, garbage, or hazardous materials" },
-            { label: "Original delivery reference", desc: "Link to the request when these items came in, if applicable" },
+            "List every item in enough detail to identify it.",
+            "Where it is on site right now.",
+            "Photos if it is waste, garbage, or hazardous material.",
           ]}
         />
-      </Panel>
-
+        <Tip title="Before you submit">The gate will match the vehicle load to this list, so keep it accurate.</Tip>
+      </Lesson>
       <PracticeForm>
         <Field label="What are you pulling out? (required)">
           <textarea
@@ -657,14 +625,11 @@ function GatepassStep() {
         {desc && location && (
           <p className="text-sm text-muted-foreground">
             Once submitted, you'll receive a reference number like{" "}
-            <span className="font-medium text-foreground">AGL-2471</span>. Show this to security at the gate.
+            <span className="font-medium text-foreground">AGL-2471</span>. Show this to security at the
+            gate.
           </p>
         )}
       </PracticeForm>
-
-      <Tip title="Double-check before submitting">
-        Security will verify everything against your list at the exit gate, so make sure all details are accurate.
-      </Tip>
     </>
   );
 }
@@ -675,26 +640,17 @@ function ServiceStep() {
 
   return (
     <>
-      <Lead>
-        Report any facility problems or request services like power, water, lift access, or emergency support.
-      </Lead>
-
-      <Panel title="Types of service requests">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {["Power supply issues", "Water problems", "Lift or crane access", "Emergency services"].map((label) => (
-            <div
-              key={label}
-              className="rounded-xl border border-border/70 px-4 py-2.5 text-sm font-medium"
-            >
-              {label}
-            </div>
-          ))}
-        </div>
-        <p className="mt-4 text-sm text-muted-foreground">
-          Emergency services include ambulance, fire response, and safety training sessions.
-        </p>
-      </Panel>
-
+      <Lesson visual={<ServiceScreen />}>
+        <Lead>Report a facility problem or ask for power, water, lift access, or emergency support.</Lead>
+        <Callouts
+          items={[
+            "Pick the request type — including ambulance, fire, or HSE training.",
+            "Describe the problem in plain language.",
+            "Give a precise location (building, floor, room or dock).",
+          ]}
+        />
+        <Tip title="Need help now?">Chat the helpdesk in the app, or book HSE training from there too.</Tip>
+      </Lesson>
       <PracticeForm>
         <Field label="What's the problem? (required)">
           <textarea
@@ -716,44 +672,33 @@ function ServiceStep() {
         </Field>
         {desc && location && (
           <p className="text-sm text-muted-foreground">
-            Your request will be marked as <span className="font-medium text-foreground">Pending</span> and the facility team will review it shortly.
+            Your request will be marked as <span className="font-medium text-foreground">Pending</span>{" "}
+            and the facility team will review it shortly.
           </p>
         )}
       </PracticeForm>
-
-      <Tip title="Need help now?">
-        You can also chat directly with the helpdesk team or book HSE safety training sessions through the app.
-      </Tip>
     </>
   );
 }
 
 function TrackingStep() {
-  const [selected, setSelected] = useState("Pending");
+  const [selected, setSelected] = useState<"Pending" | "Processing" | "Completed">("Pending");
   const statuses = [
-    { status: "Pending", desc: "Your request has been received and is waiting to be reviewed" },
-    { status: "Processing", desc: "The team is currently working on your request" },
-    { status: "Completed", desc: "Your request has been finished and closed" },
+    { status: "Pending" as const, desc: "Received — waiting to be reviewed." },
+    { status: "Processing" as const, desc: "The team is working on it now." },
+    { status: "Completed" as const, desc: "Finished and closed." },
   ];
 
   return (
-    <>
-      <Lead>
-        Find any of your requests by searching for its reference number or by type. You can see exactly what stage it's at.
-      </Lead>
-
-      <Panel title="How to find your requests">
-        <Steps
-          items={[
-            "Click on the Requests section in the menu",
-            "Look for your request by type (Visitor, Pull-out, Service) or reference number",
-            "Use the search bar if you have many requests",
-            "Click on a request to see its full history and current status",
-          ]}
-        />
-      </Panel>
-
-      <Panel title="Understanding request statuses">
+    <Lesson visual={<TrackingScreen status={selected} />}>
+      <Lead>Find a request by type or reference number, then read its status.</Lead>
+      <Callouts
+        items={[
+          "Open Requests, then search by visitor, pull-out, service, or number.",
+          "Open a row to see history and the current status.",
+        ]}
+      />
+      <Panel title="Tap a status to preview">
         <div className="flex gap-2">
           {statuses.map((s) => (
             <button
@@ -774,47 +719,45 @@ function TrackingStep() {
           {statuses.find((s) => s.status === selected)?.desc}
         </p>
       </Panel>
-
-      <Tip title="Stay updated">
-        Check back on open requests regularly. The faster you respond to any questions from the team, the quicker your request gets completed.
-      </Tip>
-    </>
+      <Tip title="Stay updated">Reply quickly if the team asks a question — that unblocks the request.</Tip>
+    </Lesson>
   );
 }
 
 function AccountStep() {
   return (
-    <>
-      <Lead>
-        Manage your account settings and review important guidelines for submitting requests.
-      </Lead>
-
-      <Panel title="Update your profile (click your profile picture, then My Account)">
-        <Rows
+    <Lesson
+      visual={
+        <div className="space-y-4">
+          <AccountScreen />
+          <PhotoCard
+            src={concierge}
+            alt="Facility team member"
+            caption="Ask your company contact or the facility team if you cannot submit requests."
+            className="h-40"
+          />
+        </div>
+      }
+    >
+      <Lead>Update your profile and follow these rules when you submit.</Lead>
+      <Callouts
+        items={[
+          "Click your photo, then My Account.",
+          "Keep display name, phone, password, and extra security up to date.",
+        ]}
+      />
+      <Panel title="Request guidelines">
+        <Callouts
           items={[
-            { label: "Display name", desc: "The name that appears on your requests" },
-            { label: "Phone number", desc: "Your contact number for urgent updates" },
-            { label: "Password", desc: "Change your login password" },
-            { label: "Extra security", desc: "Turn on 6-digit code protection for added security" },
+            "Only authorized company contacts can submit.",
+            "Check names, plates, and item lists before sending.",
+            "Submit at least 24 hours ahead when you can.",
+            "Tell the facility team if your company contact changes.",
           ]}
         />
       </Panel>
-
-      <Panel title="Important guidelines for requests">
-        <Steps
-          items={[
-            "Only authorized contact persons can submit requests for their company",
-            "Double-check all names, license plates, and item lists before submitting",
-            "Submit requests at least 24 hours before you need them processed",
-            "Notify the facility team if your company's contact person changes",
-          ]}
-        />
-      </Panel>
-
-      <Tip title="Not an authorized person?">
-        Ask your company's designated contact person to submit requests on your behalf.
-      </Tip>
-    </>
+      <Tip title="Not an authorized person?">Ask your company's designated contact to submit for you.</Tip>
+    </Lesson>
   );
 }
 
@@ -844,7 +787,15 @@ function Finish({ onRestart, onJump }: { onRestart: () => void; onJump: (n: numb
     <section className="flex flex-col items-center text-center">
       <Lockup />
 
-      <span className="mt-12 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
+      <div className="mt-10 w-full max-w-md overflow-hidden rounded-2xl border border-border/70">
+        <img
+          src={concierge}
+          alt="Facility team ready to help"
+          className="h-48 w-full object-cover object-top"
+        />
+      </div>
+
+      <span className="mt-8 flex h-12 w-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
         <Check className="h-5 w-5" />
       </span>
 
@@ -854,7 +805,7 @@ function Finish({ onRestart, onJump }: { onRestart: () => void; onJump: (n: numb
         request at Agila Subic.
       </p>
 
-      <div className="mt-12 grid w-full gap-3 sm:grid-cols-2">
+      <div className="mt-10 grid w-full gap-3 sm:grid-cols-2">
         {STEPS.map((s, i) => (
           <button
             key={s.key}
@@ -873,7 +824,7 @@ function Finish({ onRestart, onJump }: { onRestart: () => void; onJump: (n: numb
 
       <button
         onClick={onRestart}
-        className="mt-12 rounded-full border border-border px-8 py-3 text-sm font-medium transition-colors hover:border-accent"
+        className="mt-10 rounded-full border border-border px-8 py-3 text-sm font-medium transition-colors hover:border-accent"
       >
         Start over
       </button>

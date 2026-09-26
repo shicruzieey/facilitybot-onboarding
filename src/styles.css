@@ -189,10 +189,24 @@
   }
 }
 
+@keyframes pin {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.815 0.117 213 / 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 6px oklch(0.815 0.117 213 / 0);
+  }
+}
+
 @utility animate-step-in {
   animation: step-in 0.25s ease-out both;
 }
 
 @utility animate-step-out {
   animation: step-out 0.15s ease-in both;
+}
+
+@utility animate-pin {
+  animation: pin 2s ease-out infinite;
 }
